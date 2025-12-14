@@ -41,7 +41,8 @@ except gpiozero.BadPinFactory:
     motor_enable = PinMock(27)
     direction = PinMock(17)
 
-motor.blink(on_time=0.0001, off_time=0.0001)
+motor_enable.on()
+
 @app.post("/on")
 def motor_on():
     # Inverted pin
