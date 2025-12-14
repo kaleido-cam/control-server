@@ -55,7 +55,7 @@ def motor_off():
 
 @app.post("/speed")
 def motor_direction(body: schemas.MotorSpeed):
-    if body.direction == schemas.Direction.CLOCKWISE:
+    if body.direction == schemas.Direction.COUNTERCLOCKWISE:
         direction.on()
     else:
         direction.off()
