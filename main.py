@@ -33,7 +33,7 @@ class PinMock:
 # configure raspberry pi output pins
 try:
     motor = LED(4)
-    motor_enable = OutputDevice(27)
+    motor_enable = OutputDevice(27, active_high=False)
     direction = OutputDevice(17)
 except gpiozero.BadPinFactory:
     logger.error("Couldn't setup GPIO pins. Assuming you are running on a dev machine")
@@ -41,17 +41,15 @@ except gpiozero.BadPinFactory:
     motor_enable = PinMock(27)
     direction = PinMock(17)
 
-motor_enable.on()
+motor_enable.off()
 
 @app.post("/on")
 def motor_on():
-    # Inverted pin
-    motor_enable.off()
+    motor_enable.on()
 
 @app.post("/off")
 def motor_off():
-    # Inverted pin
-    motor_enable.on()
+    motor_enable.off()
 
 @app.post("/speed")
 def motor_direction(body: schemas.MotorSpeed):
