@@ -87,7 +87,7 @@ except (gpiozero.BadPinFactory, HardwarePWMException):
     direction = create_hardware_mock("Direction")
 
 motor_enable.off()
-light.stop()
+light.start(15)
 motor.stop()
 
 @app.post("/motor")
