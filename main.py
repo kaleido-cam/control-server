@@ -140,7 +140,7 @@ def system_update():
 @app.get("/system/version")
 def system_version() -> SystemVersionResponse:
     """
-    Get the current git commit hash of the running code.
+    Get the current git commit hash of the code on disk.
     """
     import subprocess
 
