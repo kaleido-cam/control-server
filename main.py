@@ -125,7 +125,8 @@ def light(body: schemas.Light):
 @app.post("/system/update", status_code=204)
 def system_update():
     """
-    Update the system by pulling the latest changes from git and restarting the service.
+    Update the system by pulling the latest changes from git.
+    Requires hot reloading to be enabled for changes to take effect.
     """
     import subprocess
 
