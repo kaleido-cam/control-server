@@ -73,22 +73,22 @@ app = FastAPI()
 
 # configure raspberry pi output pins
 try:
-    light = safe_init_pwm(0, 1000)
-    motor = safe_init_pwm(1, 100)
+    light_gpio = safe_init_pwm(0, 1000)
+    motor_gpio = safe_init_pwm(1, 100)
 
     motor_enable = OutputDevice(PIN_MOTOR_ENABLE, active_high=False)
     direction = OutputDevice(PIN_MOTOR_DIRECTION)
 except (gpiozero.BadPinFactory, HardwarePWMException):
     logger.error("Couldn't setup GPIO pins. Assuming you are running on a dev machine")
     from unittest.mock import MagicMock
-    light = create_hardware_mock("Light")
-    motor = create_hardware_mock("Motor")
+    light_gpio = create_hardware_mock("Light")
+    motor_gpio = create_hardware_mock("Motor")
     motor_enable = create_hardware_mock("MotorEnable")
     direction = create_hardware_mock("Direction")
 
 motor_enable.off()
-light.start(15)
-motor.stop()
+light_gpio.start(15)
+motor_gpio.stop()
 
 @app.post("/motor")
 def motor(body: schemas.Motor):
@@ -103,13 +103,13 @@ def motor(body: schemas.Motor):
 
     if body.frequency == 0:
         motor_enable.off()
-        motor.stop()
+        motor_gpio.stop()
     else:
-        # Duty cycle is irrelevant for motor speed.
+        # Duty cycle is irrelevant for motor_gpio speed.
         # The motor driver only counts the edge transitions.
         # Therefore, the duty cycle only requires to be >0 and <100
-        motor.start(50)
-        motor.change_frequency(abs(body.frequency))
+        motor_gpio.start(50)
+        motor_gpio.change_frequency(abs(body.frequency))
         motor_enable.on()
 
 @app.post("/light")
@@ -117,4 +117,4 @@ def light(body: schemas.Light):
     """
     Change the brightness of the light. Brightness is given in percent (0-100).
     """
-    light.change_duty_cycle(body.brightness)
+    light_gpio.change_duty_cycle(body.brightness)
