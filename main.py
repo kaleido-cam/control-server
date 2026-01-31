@@ -79,6 +79,15 @@ def create_hardware_mock(name):
     })
     return mock
 
+def get_version() -> str:
+    try:
+        result = subprocess.run(["git", "rev-parse", "HEAD"], check=True, capture_output=True, text=True)
+        commit_hash = result.stdout.strip()
+        return commit_hash
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Failed to get git commit hash: {e}")
+        return "unknown"
+
 PIN_MOTOR_ENABLE = int(os.getenv("PIN_MOTOR_ENABLE", 26))
 PIN_MOTOR_STEP = int(os.getenv("PIN_MOTOR_STEP", 13))
 PIN_MOTOR_DIRECTION = int(os.getenv("PIN_MOTOR_DIRECTION", 6))
@@ -137,11 +146,20 @@ def light(body: schemas.Light):
 @app.post("/system/update", tags=["system"], status_code=204)
 def system_update():
     """
-    Update the system by pulling the latest changes from git.
-    Requires hot reloading to be enabled for changes to take effect.
+    Update the system by pulling the latest changes from git and restarting the service if there is a new version.
     """
     logger.info("Starting system update...")
+
+    previous_hash = get_version()
     subprocess.run(["git", "pull"], check=True)
+    new_hash = get_version()
+
+    if previous_hash == new_hash:
+        logger.info("System is already up to date. No restart needed.")
+        return False
+
+    # Restart with a slight delay, so the response can be sent before the server goes down
+    subprocess.Popen(["/bin/sh", "-c", "sleep 2 && uv sync && sudo systemctl restart kaleido-webapp.service"])
     logger.info("System update completed successfully.")
 
     return 204
