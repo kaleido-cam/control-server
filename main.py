@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from gpiozero import OutputDevice
 from fastapi import FastAPI
 import schemas
+import sentry_sdk
 from time import sleep
 from rpi_hardware_pwm import HardwarePWM, HardwarePWMException
 import subprocess
@@ -13,6 +14,14 @@ import logging
 from schemas import SystemVersionResponse
 
 load_dotenv()
+
+if sentry_dsn := os.getenv("SENTRY_DSN"):
+    sentry_sdk.init(
+        dsn=sentry_dsn,
+        traces_sample_rate=0,
+        send_default_pii=False,
+    )
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 logger = logging.getLogger(__name__)

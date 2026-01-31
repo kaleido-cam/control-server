@@ -9,5 +9,6 @@ dependencies = [
     "gpiozero>=2.0.1",
     "python-dotenv>=1.2.1",
     "rpi-hardware-pwm>=0.3.0",
+    "sentry-sdk[fastapi]>=2.51.0",
     "uvicorn>=0.38.0",
 ]
