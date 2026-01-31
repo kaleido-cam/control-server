@@ -20,6 +20,7 @@ if sentry_dsn := os.getenv("SENTRY_DSN"):
         dsn=sentry_dsn,
         traces_sample_rate=0,
         send_default_pii=False,
+        environment=f'kaleido-{os.getenv("KALEIDO_SN", "development")}',
     )
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
