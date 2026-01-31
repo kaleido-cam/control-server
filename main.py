@@ -159,7 +159,7 @@ def system_update():
         return False
 
     # Restart with a slight delay, so the response can be sent before the server goes down
-    subprocess.Popen(["/bin/sh", "-c", "sleep 2 && uv sync && sudo systemctl restart kaleido-webapp.service"])
+    subprocess.Popen(["/bin/sh", "-c", "sleep 2 && uv sync && sudo systemctl restart kaleido-control-server.service"])
     logger.info("System update completed successfully.")
 
     return 204
